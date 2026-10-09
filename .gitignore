@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+/apiKey*.txt
+.env
+.env.*
+!.env.example

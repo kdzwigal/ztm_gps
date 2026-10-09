@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Warszawski transport na żywo</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    >
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <div>
+            <p class="eyebrow">Warszawa · mapa na żywo</p>
+            <h1>Transport w ruchu</h1>
+          </div>
+        </div>
+        <button class="location-button" id="locate-button" type="button">
+          <span class="location-icon" aria-hidden="true">⌖</span>
+          <span>Moja lokalizacja</span>
+        </button>
+      </header>
+
+      <section class="map-panel" aria-label="Mapa pojazdów komunikacji miejskiej">
+        <div class="map-toolbar">
+          <div class="legend" aria-label="Legenda mapy">
+            <span><i class="legend-dot bus-dot"></i>Autobus</span>
+            <span><i class="legend-dot tram-dot"></i>Tramwaj</span>
+            <span><i class="legend-dot user-dot"></i>Ty</span>
+          </div>
+          <p class="map-hint">Pojazdy widoczne w aktualnym obszarze mapy</p>
+        </div>
+        <div id="map" role="application" aria-label="Interaktywna mapa Warszawy"></div>
+        <aside class="status-card" aria-live="polite">
+          <div class="status-line">
+            <span class="status-indicator" id="feed-indicator"></span>
+            <p id="feed-status">Łączenie z danymi ZTM…</p>
+          </div>
+          <p class="location-status" id="location-status"></p>
+        </aside>
+        <div class="map-credit">Mapa © OpenStreetMap</div>
+      </section>
+
+      <footer class="app-footer">
+        <span class="live-indicator"></span>
+        <span>Pozycje pojazdów odświeżają się co 10 sekund</span>
+        <span class="footer-separator">·</span>
+        <span>Źródło: Otwarte Dane Warszawa</span>
+      </footer>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

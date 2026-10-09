@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: warsaw-ztm-live-map
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: ZTM_API_KEY
+        sync: false
