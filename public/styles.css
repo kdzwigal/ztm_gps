@@ -177,6 +177,31 @@ h1 {
   background: #18a879;
 }
 
+.stop-dot {
+  background: #7546c8;
+}
+
+.stops-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 37px;
+  padding: 0 12px;
+  border: 1px solid #dfe6ed;
+  border-radius: 12px;
+  background: #ffffffed;
+  color: #394c60;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  box-shadow: 0 5px 18px #19324a18;
+  backdrop-filter: blur(10px);
+}
+
+.stops-toggle[aria-pressed="false"] {
+  opacity: 0.65;
+}
+
 .map-hint {
   margin: 0;
   padding: 10px 13px;
@@ -210,7 +235,8 @@ h1 {
 }
 
 .status-line p,
-.location-status {
+.location-status,
+.stops-status {
   margin: 0;
   color: #536579;
   font-size: 12px;
@@ -245,6 +271,10 @@ h1 {
   margin: 8px 0 0 17px;
   padding-top: 8px;
   border-top: 1px solid var(--border);
+}
+
+.stops-status {
+  margin: 7px 0 0 17px;
 }
 
 .map-credit {
@@ -297,6 +327,12 @@ h1 {
   font-size: 12px;
 }
 
+.stop-lines {
+  margin-top: 5px;
+  color: #56339a;
+  font-weight: 650;
+}
+
 @media (max-width: 680px) {
   body {
     padding: 14px;
@@ -327,6 +363,7 @@ h1 {
     left: 10px;
     right: 10px;
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .legend {
@@ -342,6 +379,12 @@ h1 {
   .map-hint {
     max-width: 130px;
     padding: 8px 9px;
+    font-size: 10px;
+  }
+
+  .stops-toggle {
+    min-height: 33px;
+    padding: 0 9px;
     font-size: 10px;
   }
 

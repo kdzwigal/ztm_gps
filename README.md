@@ -25,4 +25,6 @@ Mapa korzysta z kafelków OpenStreetMap oraz biblioteki Leaflet ładowanej z CDN
 
 > Uwaga: endpoint ZTM może okresowo zwracać `500 Service unavailable`. W takim przypadku wdrożenie i mapa nadal działają, ale API nie dostarcza bieżących pozycji pojazdów.
 
+Mapa wyświetla również przystanki z katalogu [Lokalizacja przystanków komunikacji miejskiej](https://dane.um.warszawa.pl/pl/catalogue/009fce84-0024-431a-aa5e-9515c539899e). Kliknij znacznik przystanku, aby pobrać listę linii z katalogu [Linie dostępne na przystanku](https://dane.um.warszawa.pl/pl/catalogue/dedad7b7-85f4-4be9-b73e-8395cefb434c); linie są pobierane na żądanie i buforowane na serwerze przez godzinę. Pełna lista przystanków jest odświeżana co 6 godzin. Przycisk „Przystanki” pozwala ukryć lub ponownie pokazać ich znaczniki.
+
 `render.yaml` zawiera równoważną konfigurację dla osób, które później zechcą utworzyć usługę przez Blueprint.

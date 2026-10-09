@@ -9,15 +9,24 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
 const vehicleLayer = L.layerGroup().addTo(map);
+map.createPane("stops-pane").style.zIndex = 410;
+const stopsRenderer = L.canvas({ pane: "stops-pane" });
+const stopLayer = L.layerGroup().addTo(map);
 const feedStatus = document.querySelector("#feed-status");
 const feedIndicator = document.querySelector("#feed-indicator");
 const locationStatus = document.querySelector("#location-status");
+const stopsStatus = document.querySelector("#stops-status");
 const locateButton = document.querySelector("#locate-button");
+const stopsToggle = document.querySelector("#stops-toggle");
 let vehicles = [];
+let stops = [];
 let updatedAt;
 let loading = false;
+let stopsVisible = true;
 let locationMarker;
 let feedState = "loading";
+const stopLinesCache = new Map();
+const stopLinesRequests = new Map();
 
 function setFeedStatus(message, state) {
   feedStatus.textContent = message;
@@ -58,8 +67,8 @@ function addVehicleMarker(vehicle) {
 }
 
 function renderVehicles() {
-  vehicleLayer.clearLayers();
   const visible = visibleVehicles();
+  vehicleLayer.clearLayers();
   visible.forEach(addVehicleMarker);
 
   const buses = visible.filter((vehicle) => vehicle.type === "bus").length;
@@ -71,6 +80,104 @@ function renderVehicles() {
       second: "2-digit",
     }).format(new Date(updatedAt));
     setFeedStatus(`Autobusy: ${buses} · Tramwaje: ${trams} · aktualizacja ${time}`, "live");
+  }
+}
+
+function stopPopup(stop) {
+  const popup = document.createElement("div");
+  const title = document.createElement("p");
+  const details = document.createElement("p");
+  const lines = document.createElement("p");
+  title.className = "popup-title";
+  details.className = "popup-detail";
+  lines.className = "popup-detail stop-lines";
+  title.textContent = stop.name;
+  details.textContent = `Zespół ${stop.team}, słupek ${stop.pole}`;
+  lines.textContent = "Pobieranie linii…";
+  popup.append(title, details, lines);
+  return { popup, lines };
+}
+
+async function loadStopLines(stop, container) {
+  const cacheKey = `${stop.team}:${stop.pole}`;
+  const cachedLines = stopLinesCache.get(cacheKey);
+  if (cachedLines) {
+    renderStopLines(container, cachedLines);
+    return;
+  }
+
+  container.textContent = "Pobieranie linii…";
+  try {
+    let request = stopLinesRequests.get(cacheKey);
+    if (!request) {
+      const query = new URLSearchParams({
+        busstopId: stop.team,
+        busstopNr: stop.pole,
+      });
+      request = fetch(`/api/stop-lines?${query}`)
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload.error || "Nie udało się pobrać linii.");
+          }
+          if (!Array.isArray(payload.lines)) {
+            throw new Error("Serwer zwrócił nieprawidłową listę linii.");
+          }
+          stopLinesCache.set(cacheKey, payload.lines);
+          return payload.lines;
+        })
+        .finally(() => stopLinesRequests.delete(cacheKey));
+      stopLinesRequests.set(cacheKey, request);
+    }
+    renderStopLines(container, await request);
+  } catch (error) {
+    container.textContent = error.message || "Nie udało się pobrać linii.";
+  }
+}
+
+function renderStopLines(container, lines) {
+  container.textContent = lines.length ? `Linie: ${lines.join(", ")}` : "Brak przypisanych linii.";
+}
+
+function renderStops() {
+  stopLayer.clearLayers();
+  if (!stopsVisible) return;
+
+  const bounds = map.getBounds();
+  for (const stop of stops) {
+    if (!bounds.contains([stop.latitude, stop.longitude])) continue;
+
+    const marker = L.circleMarker([stop.latitude, stop.longitude], {
+      color: "#ffffff",
+      fillColor: "#7546c8",
+      fillOpacity: 0.95,
+      radius: 4,
+      renderer: stopsRenderer,
+      weight: 1,
+    });
+    const { popup, lines } = stopPopup(stop);
+    marker.bindPopup(popup);
+    marker.on("popupopen", () => loadStopLines(stop, lines));
+    marker.addTo(stopLayer);
+  }
+}
+
+async function loadStops() {
+  stopsStatus.textContent = "Ładowanie przystanków…";
+  try {
+    const response = await fetch("/api/stops");
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || "Nie udało się pobrać przystanków.");
+    }
+    if (!Array.isArray(payload.stops)) {
+      throw new Error("Serwer zwrócił nieprawidłową listę przystanków.");
+    }
+    stops = payload.stops;
+    renderStops();
+    stopsStatus.textContent = `Przystanki: ${stops.length.toLocaleString("pl-PL")}`;
+  } catch (error) {
+    stopsStatus.textContent = error.message || "Nie udało się pobrać przystanków.";
   }
 }
 
@@ -142,7 +249,17 @@ function locateUser() {
   );
 }
 
-map.on("moveend", renderVehicles);
+map.on("moveend", () => {
+  renderVehicles();
+  renderStops();
+});
+stopsToggle.addEventListener("click", () => {
+  stopsVisible = !stopsVisible;
+  stopsToggle.setAttribute("aria-pressed", String(stopsVisible));
+  if (stopsVisible) renderStops();
+  else stopLayer.clearLayers();
+});
 locateButton.addEventListener("click", locateUser);
 loadVehicles();
+loadStops();
 window.setInterval(loadVehicles, 10_000);

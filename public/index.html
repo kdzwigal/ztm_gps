@@ -35,6 +35,15 @@
             <span><i class="legend-dot tram-dot"></i>Tramwaj</span>
             <span><i class="legend-dot user-dot"></i>Ty</span>
           </div>
+          <button
+            class="stops-toggle"
+            id="stops-toggle"
+            type="button"
+            aria-pressed="true"
+          >
+            <i class="legend-dot stop-dot"></i>
+            Przystanki
+          </button>
           <p class="map-hint">Pojazdy widoczne w aktualnym obszarze mapy</p>
         </div>
         <div id="map" role="application" aria-label="Interaktywna mapa Warszawy"></div>
@@ -44,6 +53,7 @@
             <p id="feed-status">Łączenie z danymi ZTM…</p>
           </div>
           <p class="location-status" id="location-status"></p>
+          <p class="stops-status" id="stops-status">Ładowanie przystanków…</p>
         </aside>
         <div class="map-credit">Mapa © OpenStreetMap</div>
       </section>
