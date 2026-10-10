@@ -46,7 +46,7 @@ function getApiKey() {
 }
 
 async function fetchApiJson(url, apiKey, body) {
-  const headers = { Authorization: `token ${apiKey}` };
+  const headers = { Authorization: apiKey };
   const options = {
     method: "POST",
     headers,
