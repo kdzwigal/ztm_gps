@@ -1,3 +1,4 @@
+# AI generated code and README
 # Warszawski transport na żywo
 
 Mapa pokazuje pozycje autobusów i tramwajów pobierane z [Otwarte Dane Warszawa](https://dane.um.warszawa.pl/pl/catalogue/f319f602-7292-4e8c-b3d1-f5898aa9a638). Katalog dokumentuje autobusy (`type: 1`) i tramwaje (`type: 2`); nie udostępnia w tej karcie lokalizacji SKM ani metra. Pojazdy są widoczne tylko wtedy, gdy znajdują się w aktualnym obszarze mapy. Lokalizacja użytkownika jest pobierana po wybraniu przycisku „Moja lokalizacja”.
